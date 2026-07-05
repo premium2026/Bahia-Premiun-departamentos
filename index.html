@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bahía Premium — Alquiler Temporario Premium</title>
+<meta name="description" content="Dos departamentos premium para alquiler temporario en Bahía Blanca - Buenos Aires - Argentina. Reservá por Booking, Airbnb o WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14212B;
+    --ink-soft:#1E313E;
+    --stone:#EAE3D3;
+    --stone-dark:#DED2B4;
+    --paper:#F8F5EC;
+    --brass:#A9814C;
+    --brass-light:#C9A66B;
+    --pine:#3B4F40;
+    --text-dark:#20211D;
+    --text-muted:#5B5A52;
+    --text-light:#F5F1E6;
+    --radius:2px;
+    --wa:#25D366;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter', sans-serif;
+    color:var(--text-dark);
+    background:var(--paper);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:'Fraunces', serif; font-weight:600; line-height:1.1; letter-spacing:-0.01em;}
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  .mono{font-family:'Space Mono', monospace;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+  section{padding:100px 0;}
+  @media(max-width:640px){ section{padding:64px 0;} .wrap{padding:0 20px;} }
+
+  /* -------- key tag signature element -------- */
+  .keytag{
+    display:inline-flex; align-items:center; gap:10px;
+    background:linear-gradient(155deg, var(--brass-light), var(--brass));
+    color:#241a0d;
+    padding:7px 16px 7px 12px;
+    border-radius:20px 6px 6px 20px;
+    font-family:'Space Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:0.06em;
+    box-shadow:0 2px 6px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.4);
+    position:relative;
+  }
+  .keytag::before{
+    content:'';
+    width:9px; height:9px;
+    border-radius:50%;
+    background:var(--paper);
+    box-shadow:inset 0 1px 2px rgba(0,0,0,.35);
+    flex-shrink:0;
+  }
+
+  /* -------- header -------- */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(20,33,43,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .nav{display:flex; align-items:center; justify-content:space-between; padding:18px 32px;}
+  .logo{font-family:'Fraunces',serif; font-weight:600; font-size:21px; color:var(--text-light); letter-spacing:0.01em;}
+  .logo span{color:var(--brass-light);}
+  .nav-links{display:flex; align-items:center; gap:30px;}
+  .nav-links a{color:var(--text-light); font-size:14px; opacity:.85; transition:opacity .2s;}
+  .nav-links a:hover{opacity:1;}
+  .lang-toggle{
+    font-family:'Space Mono',monospace; font-size:12px; color:var(--text-light);
+    border:1px solid rgba(255,255,255,.3); border-radius:20px; padding:5px 12px;
+    cursor:pointer; background:transparent;
+  }
+  .lang-toggle:hover{border-color:var(--brass-light); color:var(--brass-light);}
+  .burger{display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none;}
+  .burger span{width:24px; height:2px; background:var(--text-light);}
+  @media(max-width:900px){
+    .nav-links{position:fixed; top:64px; left:0; right:0; background:var(--ink); flex-direction:column; padding:24px 32px; gap:20px; transform:translateY(-140%); transition:transform .3s ease; border-bottom:1px solid rgba(255,255,255,.08);}
+    .nav-links.open{transform:translateY(0);}
+    .burger{display:flex;}
+  }
+
+  /* -------- hero -------- */
+  .hero{
+    min-height:100vh;
+    display:flex; align-items:center;
+    background:
+      radial-gradient(ellipse at 75% 20%, rgba(169,129,76,0.22), transparent 55%),
+      linear-gradient(180deg, var(--ink) 0%, #0F1A22 100%);
+    position:relative;
+    overflow:hidden;
+    padding-top:100px;
+  }
+  .hero::after{
+    content:'';
+    position:absolute; inset:0;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 1px, transparent 1px, transparent 90px);
+    pointer-events:none;
+  }
+  .hero-inner{position:relative; z-index:2; max-width:680px;}
+  .eyebrow{
+    font-family:'Space Mono',monospace; color:var(--brass-light); font-size:13px;
+    letter-spacing:0.14em; text-transform:uppercase; margin-bottom:22px; display:block;
+  }
+  .hero h1{
+    color:var(--text-light); font-size:clamp(38px,6vw,64px); margin-bottom:22px;
+  }
+  .hero h1 em{color:var(--brass-light); font-style:italic; font-weight:400;}
+  .hero p{color:rgba(245,241,230,0.78); font-size:18px; max-width:520px; margin-bottom:36px;}
+  .btn-row{display:flex; gap:16px; flex-wrap:wrap;}
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:14px 26px; border-radius:2px; font-size:14.5px; font-weight:600;
+    cursor:pointer; border:1px solid transparent; transition:transform .2s ease, background .2s;
+  }
+  .btn-primary{background:var(--brass-light); color:#20170a;}
+  .btn-primary:hover{transform:translateY(-2px); background:var(--brass);}
+  .btn-ghost{border-color:rgba(245,241,230,0.35); color:var(--text-light);}
+  .btn-ghost:hover{border-color:var(--brass-light); color:var(--brass-light);}
+  .hero-tags{display:flex; gap:14px; margin-top:56px; flex-wrap:wrap;}
+
+  /* -------- section headers -------- */
+  .sec-head{max-width:640px; margin-bottom:56px;}
+  .sec-head .eyebrow{color:var(--brass);}
+  .sec-head h2{font-size:clamp(28px,4vw,42px); color:var(--ink);}
+  .sec-head p{color:var(--text-muted); margin-top:16px; font-size:16.5px;}
+
+  /* -------- apartment blocks -------- */
+  .apt{border-top:1px solid var(--stone-dark);}
+  .apt-grid{display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:start;}
+  @media(max-width:880px){.apt-grid{grid-template-columns:1fr; gap:36px;}}
+  .apt.reverse .apt-grid{direction:rtl;}
+  .apt.reverse .apt-grid > *{direction:ltr;}
+
+  .gallery{display:grid; grid-template-columns:1.4fr 1fr; grid-template-rows:1fr 1fr; gap:10px; height:420px;}
+  .gallery .ph{grid-row:1/3;}
+  .ph{
+    position:relative; border-radius:2px; overflow:hidden;
+    background:
+      linear-gradient(155deg, var(--stone) 0%, var(--stone-dark) 100%);
+    display:flex; align-items:flex-end; justify-content:flex-start;
+  }
+  .ph::before{
+    content:'';
+    position:absolute; inset:0;
+    background-image:repeating-linear-gradient(135deg, rgba(169,129,76,0.10) 0px, rgba(169,129,76,0.10) 2px, transparent 2px, transparent 22px);
+  }
+  .ph-label{
+    position:relative; z-index:1; margin:14px; font-family:'Space Mono',monospace; font-size:11px;
+    color:var(--text-muted); background:rgba(248,245,236,0.85); padding:5px 9px; border-radius:2px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .ph svg{position:absolute; top:14px; right:14px; opacity:.35; width:22px; height:22px;}
+
+  .apt-info .keytag{margin-bottom:22px;}
+  .apt-info h3{font-size:clamp(26px,3vw,34px); color:var(--ink); margin-bottom:6px;}
+  .apt-info .zone{color:var(--brass); font-size:14px; font-weight:600; margin-bottom:18px; display:block;}
+  .apt-info p.desc{color:var(--text-muted); margin-bottom:26px; font-size:15.5px;}
+
+  .feat-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px 20px; margin-bottom:28px;}
+  .feat{display:flex; align-items:center; gap:10px; font-size:14px; color:var(--text-dark);}
+  .feat svg{width:18px; height:18px; stroke:var(--pine); flex-shrink:0;}
+
+  .amenities{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:30px;}
+  .chip{
+    font-size:12.5px; padding:6px 12px; border:1px solid var(--stone-dark); border-radius:20px; color:var(--text-muted);
+  }
+
+  .price-row{display:flex; align-items:baseline; gap:8px; margin-bottom:24px;}
+  .price-row .from{font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.06em;}
+  .price-row .amt{font-family:'Fraunces',serif; font-size:32px; color:var(--ink); font-weight:600;}
+  .price-row .unit{font-size:13px; color:var(--text-muted);}
+
+  .apt-ctas{display:flex; flex-wrap:wrap; gap:12px;}
+  .btn-book{background:var(--ink); color:var(--text-light);}
+  .btn-book:hover{background:var(--ink-soft);}
+  .btn-air{background:#FF5A5F; color:#fff;}
+  .btn-air:hover{filter:brightness(1.08);}
+  .btn-wa{background:var(--wa); color:#fff;}
+  .btn-wa:hover{filter:brightness(1.06);}
+  .btn svg{width:16px; height:16px;}
+
+  /* -------- trust / standards -------- */
+  .standards{background:var(--ink); color:var(--text-light);}
+  .standards .sec-head h2{color:var(--text-light);}
+  .standards .sec-head p{color:rgba(245,241,230,.7);}
+  .standards .sec-head .eyebrow{color:var(--brass-light);}
+  .std-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.1);}
+  @media(max-width:880px){.std-grid{grid-template-columns:repeat(2,1fr);}}
+  .std-card{background:var(--ink); padding:34px 26px;}
+  .std-card svg{width:26px; height:26px; stroke:var(--brass-light); margin-bottom:18px;}
+  .std-card h4{font-size:16px; color:var(--text-light); margin-bottom:8px; font-family:'Fraunces',serif; font-weight:500;}
+  .std-card p{font-size:13.5px; color:rgba(245,241,230,.65);}
+
+  /* -------- testimonials -------- */
+  .testi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  @media(max-width:880px){.testi-grid{grid-template-columns:1fr;}}
+  .testi{background:var(--stone); padding:30px 26px; border-radius:2px; position:relative;}
+  .testi .stars{color:var(--brass); font-size:14px; margin-bottom:14px; letter-spacing:2px;}
+  .testi p{font-size:14.5px; color:var(--text-dark); margin-bottom:20px; font-style:italic;}
+  .testi .who{font-family:'Space Mono',monospace; font-size:12.5px; color:var(--text-muted);}
+
+  /* -------- contact -------- */
+  .contact-wrap{display:grid; grid-template-columns:0.9fr 1.1fr; gap:60px;}
+  @media(max-width:880px){.contact-wrap{grid-template-columns:1fr; gap:40px;}}
+  .contact-info h3{color:var(--ink); font-size:24px; margin-bottom:16px;}
+  .contact-info p{color:var(--text-muted); margin-bottom:26px; font-size:15px;}
+  .info-line{display:flex; gap:12px; align-items:flex-start; margin-bottom:18px; font-size:14.5px;}
+  .info-line svg{width:18px; height:18px; stroke:var(--brass); flex-shrink:0; margin-top:2px;}
+  .info-line b{display:block; font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-muted); margin-bottom:2px;}
+
+  form{background:var(--stone); padding:40px; border-radius:2px;}
+  .form-row{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;}
+  @media(max-width:520px){.form-row{grid-template-columns:1fr;}}
+  label{display:block; font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-muted); margin-bottom:6px;}
+  input, select, textarea{
+    width:100%; padding:12px 14px; border:1px solid var(--stone-dark); border-radius:2px;
+    background:var(--paper); font-family:'Inter',sans-serif; font-size:14.5px; color:var(--text-dark);
+  }
+  input:focus, select:focus, textarea:focus{outline:2px solid var(--brass-light); outline-offset:1px;}
+  .field{margin-bottom:16px;}
+  textarea{resize:vertical; min-height:100px;}
+  .form-note{font-size:12.5px; color:var(--text-muted); margin-top:14px;}
+  .form-actions{display:flex; gap:12px; margin-top:8px; flex-wrap:wrap;}
+
+  /* -------- footer -------- */
+  footer{background:var(--ink); color:rgba(245,241,230,.7); padding:56px 0 30px;}
+  .foot-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:40px; margin-bottom:40px;}
+  @media(max-width:700px){.foot-grid{grid-template-columns:1fr; gap:28px;}}
+  footer h5{color:var(--text-light); font-family:'Space Mono',monospace; font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; margin-bottom:16px;}
+  footer a{font-size:14px; display:block; margin-bottom:10px; opacity:.85;}
+  footer a:hover{opacity:1; color:var(--brass-light);}
+  .foot-bottom{border-top:1px solid rgba(255,255,255,.1); padding-top:22px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-size:12.5px;}
+  .social-row{display:flex; gap:14px;}
+  .social-row a{margin:0; opacity:.8;}
+  .social-row svg{width:18px; height:18px;}
+
+  /* -------- floating whatsapp -------- */
+  .fab-wa{
+    position:fixed; bottom:26px; right:26px; z-index:99;
+    width:58px; height:58px; border-radius:50%;
+    background:var(--wa); display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 20px rgba(0,0,0,.3);
+    animation:pulse 2.6s infinite;
+  }
+  .fab-wa svg{width:28px; height:28px; fill:#fff;}
+  @keyframes pulse{
+    0%{box-shadow:0 6px 20px rgba(0,0,0,.3), 0 0 0 0 rgba(37,211,102,.5);}
+    70%{box-shadow:0 6px 20px rgba(0,0,0,.3), 0 0 0 14px rgba(37,211,102,0);}
+    100%{box-shadow:0 6px 20px rgba(0,0,0,.3), 0 0 0 0 rgba(37,211,102,0);}
+  }
+
+  ::selection{background:var(--brass-light); color:#20170a;}
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="nav wrap">
+    <div class="logo">BAHÍA <span>PREMIUM</span></div>
+    <div class="nav-links" id="navLinks">
+      <a href="#inicio" data-i18n="nav_inicio">Inicio</a>
+      <a href="#llave-01" data-i18n="nav_l1">Llave 01 · O'Higgins</a>
+      <a href="#llave-02" data-i18n="nav_l2">Llave 02 · SFe</a>
+      <a href="#porque" data-i18n="nav_porque">Por qué elegirnos</a>
+      <a href="#contacto" data-i18n="nav_contacto">Contacto</a>
+      <button class="lang-toggle" id="langToggle">EN</button>
+    </div>
+    <button class="burger" id="burger" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+  </nav>
+</header>
+
+<section class="hero" id="inicio">
+  <div class="wrap hero-inner">
+    <span class="eyebrow" data-i18n="hero_eyebrow">Alquiler temporario · Bahía Blanca - Buenos Aires - Argentina</span>
+    <h1 data-i18n="hero_title">Dos direcciones. <em>Un mismo estándar.</em></h1>
+    <p data-i18n="hero_sub">Dos departamentos premium, curados al detalle, mereces que tu estadía en Bahía Blanca sea la mejor y por eso decidimos que puedas contar con atención personalizada y humana, excelente ubicación, con cocheras y detalles en cada uno que los distinguen. Viajes familiares, por trabajo, estás de paso por la ciudad, Bahía Premium: más que un hotel.</p>
+    <div class="btn-row">
+      <a href="#llave-01" class="btn btn-primary" data-i18n="hero_cta1">Ver los departamentos</a>
+      <a href="#contacto" class="btn btn-ghost" data-i18n="hero_cta2">Consultar disponibilidad</a>
+    </div>
+    <div class="hero-tags">
+      <span class="keytag">LLAVE 01 — O'HIGGINS</span>
+      <span class="keytag">LLAVE 02 — SFE</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= APARTMENT 01 ================= -->
+<section class="apt" id="llave-01">
+  <div class="wrap apt-grid">
+    <div class="gallery">
+      <div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="18" height="13" rx="1"/><circle cx="12" cy="12.5" r="3.2"/><path d="M9 6l1-2h4l1 2"/></svg><span class="ph-label" data-i18n="ph_1">Living · reemplazar por foto real</span></div>
+      <div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="18" height="13" rx="1"/><circle cx="12" cy="12.5" r="3.2"/><path d="M9 6l1-2h4l1 2"/></svg><span class="ph-label" data-i18n="ph_2">Dormitorio</span></div>
+      <div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="18" height="13" rx="1"/><circle cx="12" cy="12.5" r="3.2"/><path d="M9 6l1-2h4l1 2"/></svg><span class="ph-label" data-i18n="ph_3">Cocina</span></div>
+    </div>
+    <div class="apt-info">
+      <span class="keytag">LLAVE 01</span>
+      <span class="zone" data-i18n="apt1_zone">O'HIGGINS, BAHÍA BLANCA - BUENOS AIRES - ARGENTINA</span>
+      <h3 data-i18n="apt1_title">O'Higgins Bahía Premium</h3>
+      <p class="desc" data-i18n="apt1_desc">Edificio de categoría en pleno centro de Bahía Blanca, sobre calle O'Higgins, a pasos de comercios, bancos y la vida cultural de la ciudad. Balcón, luz natural todo el día y terminaciones de categoría. Ideal para viajeros de negocios o parejas. Dirección exacta confirmada al momento de la reserva.</p>
+
+      <div class="feat-grid">
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 20V9l9-6 9 6v11"/><path d="M9 20v-6h6v6"/></svg><span data-i18n="apt1_f1">45 m² cubiertos</span></div>
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.2"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg><span data-i18n="apt1_f2">2 huéspedes</span></div>
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 12h16"/></svg><span data-i18n="apt1_f3">1 dormitorio</span></div>
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 21V9a5 5 0 0110 0v12"/><path d="M4 21h16"/></svg><span data-i18n="apt1_f4">1 baño completo</span></div>
+      </div>
+
+      <div class="amenities">
+        <span class="chip" data-i18n="chip_wifi">Wi-Fi fibra óptica</span>
+        <span class="chip" data-i18n="chip_ac">Aire frío/calor</span>
+        <span class="chip" data-i18n="chip_garage">Cochera propia</span>
+        <span class="chip" data-i18n="chip_kitchen">Cocina equipada</span>
+        <span class="chip" data-i18n="chip_laundry">Lavarropas</span>
+        <span class="chip" data-i18n="chip_security">Seguridad 24 hs</span>
+        <span class="chip" data-i18n="chip_selfcheckin">Check-in autónomo</span>
+      </div>
+
+      <div class="price-row">
+        <span class="from" data-i18n="from">Desde</span>
+        <span class="amt">USD 120</span>
+        <span class="unit" data-i18n="per_night">/ noche</span>
+      </div>
+
+      <div class="apt-ctas">
+        <a href="#" class="btn btn-book" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v4H4zM4 10h16v10H4z"/></svg>
+          Booking.com
+        </a>
+        <a href="#" class="btn btn-air" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
+          Airbnb
+        </a>
+        <a href="https://wa.me/5492911234567?text=Hola!%20Quiero%20consultar%20por%20LLAVE%2001%20-%20O'Higgins" class="btn btn-wa" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M20.5 3.5A11 11 0 003.7 17L2 22l5.2-1.7A11 11 0 1020.5 3.5zM12 20a8 8 0 01-4.1-1.1l-.3-.2-3 1 1-2.9-.2-.3A8 8 0 1112 20zm4.4-5.9c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.7.9-.3.2-.5.1a6.6 6.6 0 01-1.9-1.2 7.2 7.2 0 01-1.3-1.7c-.1-.2 0-.4.1-.5l.4-.4.2-.4v-.3c0-.1-.5-1.3-.7-1.8s-.4-.4-.5-.4h-.5a.9.9 0 00-.6.3 2.8 2.8 0 00-.9 2.1c0 1.2.9 2.4 1 2.6a8.6 8.6 0 003.7 3.4c1.3.6 1.8.6 2.4.5a2 2 0 001.3-1 1.6 1.6 0 000-1c-.1-.1-.3-.2-.5-.3z"/></svg>
+          WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= APARTMENT 02 ================= -->
+<section class="apt reverse" id="llave-02">
+  <div class="wrap apt-grid">
+    <div class="apt-info">
+      <span class="keytag">LLAVE 02</span>
+      <span class="zone" data-i18n="apt2_zone">SANTA FE, BAHÍA BLANCA - BUENOS AIRES - ARGENTINA</span>
+      <h3 data-i18n="apt2_title">SFe Bahía Premium</h3>
+      <p class="desc" data-i18n="apt2_desc">Departamento moderno sobre calle Santa Fe, en una de las zonas más buscadas de Bahía Blanca, con cochera propia y detalles que lo distinguen. Pensado para familias, equipos de trabajo o estadías extendidas.</p>
+
+      <div class="feat-grid">
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 20V9l9-6 9 6v11"/><path d="M9 20v-6h6v6"/></svg><span data-i18n="apt2_f1">78 m² cubiertos</span></div>
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.2"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg><span data-i18n="apt2_f2">4 huéspedes</span></div>
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 12h16"/></svg><span data-i18n="apt2_f3">2 dormitorios</span></div>
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 21V9a5 5 0 0110 0v12"/><path d="M4 21h16"/></svg><span data-i18n="apt2_f4">2 baños completos</span></div>
+      </div>
+
+      <div class="amenities">
+        <span class="chip" data-i18n="chip_garage">Cochera propia</span>
+        <span class="chip" data-i18n="chip_view">Balcón</span>
+        <span class="chip" data-i18n="chip_smarttv">Smart TV</span>
+        <span class="chip" data-i18n="chip_wifi">Wi-Fi fibra óptica</span>
+        <span class="chip" data-i18n="chip_laundry">Lavarropas</span>
+        <span class="chip" data-i18n="chip_selfcheckin">Check-in autónomo</span>
+      </div>
+
+      <div class="price-row">
+        <span class="from" data-i18n="from">Desde</span>
+        <span class="amt">USD 185</span>
+        <span class="unit" data-i18n="per_night">/ noche</span>
+      </div>
+
+      <div class="apt-ctas">
+        <a href="#" class="btn btn-book" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v4H4zM4 10h16v10H4z"/></svg>
+          Booking.com
+        </a>
+        <a href="#" class="btn btn-air" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
+          Airbnb
+        </a>
+        <a href="https://wa.me/5492911234567?text=Hola!%20Quiero%20consultar%20por%20LLAVE%2002%20-%20SFe" class="btn btn-wa" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M20.5 3.5A11 11 0 003.7 17L2 22l5.2-1.7A11 11 0 1020.5 3.5zM12 20a8 8 0 01-4.1-1.1l-.3-.2-3 1 1-2.9-.2-.3A8 8 0 1112 20zm4.4-5.9c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.7.9-.3.2-.5.1a6.6 6.6 0 01-1.9-1.2 7.2 7.2 0 01-1.3-1.7c-.1-.2 0-.4.1-.5l.4-.4.2-.4v-.3c0-.1-.5-1.3-.7-1.8s-.4-.4-.5-.4h-.5a.9.9 0 00-.6.3 2.8 2.8 0 00-.9 2.1c0 1.2.9 2.4 1 2.6a8.6 8.6 0 003.7 3.4c1.3.6 1.8.6 2.4.5a2 2 0 001.3-1 1.6 1.6 0 000-1c-.1-.1-.3-.2-.5-.3z"/></svg>
+          WhatsApp
+        </a>
+      </div>
+    </div>
+    <div class="gallery">
+      <div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="18" height="13" rx="1"/><circle cx="12" cy="12.5" r="3.2"/><path d="M9 6l1-2h4l1 2"/></svg><span class="ph-label" data-i18n="ph_1">Living · reemplazar por foto real</span></div>
+      <div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="18" height="13" rx="1"/><circle cx="12" cy="12.5" r="3.2"/><path d="M9 6l1-2h4l1 2"/></svg><span class="ph-label" data-i18n="ph_4">Balcón</span></div>
+      <div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="18" height="13" rx="1"/><circle cx="12" cy="12.5" r="3.2"/><path d="M9 6l1-2h4l1 2"/></svg><span class="ph-label" data-i18n="ph_5">Cochera</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STANDARDS ================= -->
+<section class="standards" id="porque">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow" data-i18n="std_eyebrow">Cómo trabajamos</span>
+      <h2 data-i18n="std_title">Los mismos estándares que un huésped internacional espera</h2>
+      <p data-i18n="std_sub">Reservar a distancia genera dudas. Por eso trabajamos con las mismas prácticas que las plataformas globales de hospitalidad.</p>
+    </div>
+    <div class="std-grid">
+      <div class="std-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="10" width="18" height="11" rx="2"/><path d="M7 10V7a5 5 0 0110 0v3"/></svg>
+        <h4 data-i18n="std1_t">Check-in autónomo 24 hs</h4>
+        <p data-i18n="std1_p">Ingreso con caja de seguridad o cerradura inteligente, sin depender de horarios.</p>
+      </div>
+      <div class="std-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12l3 3 5-6"/><circle cx="12" cy="12" r="9"/></svg>
+        <h4 data-i18n="std2_t">Cancelación flexible</h4>
+        <p data-i18n="std2_p">Cancelación gratuita hasta 48 hs antes del check-in en tarifas estándar.</p>
+      </div>
+      <div class="std-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        <h4 data-i18n="std3_t">Atención multilingüe</h4>
+        <p data-i18n="std3_p">Español, inglés y portugués por WhatsApp, antes, durante y después de la estadía.</p>
+      </div>
+      <div class="std-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6z"/></svg>
+        <h4 data-i18n="std4_t">Tarifas transparentes</h4>
+        <p data-i18n="std4_p">Sin cargos ocultos: lo que ves en la cotización es lo que pagás.</p>
+      </div>
+      <div class="std-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12l2-2 4 4 8-8 2 2-10 10z"/></svg>
+        <h4 data-i18n="std5_t">Limpieza profesional</h4>
+        <p data-i18n="std5_p">Protocolo de limpieza e higiene entre cada estadía, con amenities de bienvenida.</p>
+      </div>
+      <div class="std-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/></svg>
+        <h4 data-i18n="std6_t">Pago internacional</h4>
+        <p data-i18n="std6_p">A través de Booking o Airbnb, con la protección al huésped de cada plataforma.</p>
+      </div>
+      <div class="std-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 4v16"/></svg>
+        <h4 data-i18n="std7_t">Factura / recibo</h4>
+        <p data-i18n="std7_p">Comprobante de estadía disponible para gastos corporativos o trámites migratorios.</p>
+      </div>
+      <div class="std-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20a8 8 0 100-16 8 8 0 000 16z"/><path d="M12 8v4l3 2"/></svg>
+        <h4 data-i18n="std8_t">Soporte durante la estadía</h4>
+        <p data-i18n="std8_p">Un WhatsApp directo con el anfitrión ante cualquier imprevisto.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TESTIMONIALS ================= -->
+<section id="testimonios">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow" data-i18n="testi_eyebrow">Huéspedes</span>
+      <h2 data-i18n="testi_title">Lo que dicen quienes ya se hospedaron</h2>
+      <p data-i18n="testi_sub">Reseñas de ejemplo — reemplazar por comentarios reales de Booking / Airbnb / Google.</p>
+    </div>
+    <div class="testi-grid">
+      <div class="testi">
+        <div class="stars">★★★★★</div>
+        <p data-i18n="testi1">"Ubicación excelente y el check-in fue súper simple, llegamos de madrugada y no hubo ningún problema."</p>
+        <div class="who">M. — Madrid, España</div>
+      </div>
+      <div class="testi">
+        <div class="stars">★★★★★</div>
+        <p data-i18n="testi2">"El departamento de SFe superó las fotos. Tener cochera propia fue un plus enorme para viajar con auto y con los chicos."</p>
+        <div class="who">J. — São Paulo, Brasil</div>
+      </div>
+      <div class="testi">
+        <div class="stars">★★★★★</div>
+        <p data-i18n="testi3">"Respuesta inmediata por WhatsApp ante cualquier consulta. Se nota que atienden huéspedes internacionales seguido."</p>
+        <div class="who">A. — Nueva York, EE.UU.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section id="contacto" style="background:var(--stone);">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow" data-i18n="contact_eyebrow">Contacto</span>
+      <h2 data-i18n="contact_title">Contanos tu estadía</h2>
+      <p data-i18n="contact_sub">Completá el formulario y te respondemos por WhatsApp o email en el día.</p>
+    </div>
+    <div class="contact-wrap">
+      <div class="contact-info">
+        <h3 data-i18n="ci_title">Atención directa</h3>
+        <p data-i18n="ci_sub">También podés escribirnos directo si ya sabés qué departamento te interesa.</p>
+        <div class="info-line">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.5 3.5A11 11 0 003.7 17L2 22l5.2-1.7A11 11 0 1020.5 3.5z"/></svg>
+          <div><b>WhatsApp</b>+54 9 291 123-4567</div>
+        </div>
+        <div class="info-line">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z"/><path d="M4 6l8 6 8-6"/></svg>
+          <div><b>Email</b>reservas@bahiapremium.com.ar</div>
+        </div>
+        <div class="info-line">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2C7 2 4 5.6 4 9.5 4 15 12 22 12 22s8-7 8-12.5C20 5.6 17 2 12 2z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+          <div><b data-i18n="ci_coverage">Zonas</b>O'Higgins y Santa Fe, Bahía Blanca - Buenos Aires - Argentina</div>
+        </div>
+        <div class="info-line">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          <div><b data-i18n="ci_hours">Horario de atención</b><span data-i18n="ci_hours_val">Todos los días, 9 a 22 hs (ART)</span></div>
+        </div>
+      </div>
+
+      <form id="contactForm">
+        <div class="form-row">
+          <div class="field">
+            <label data-i18n="f_name">Nombre y apellido</label>
+            <input type="text" id="f_name" required>
+          </div>
+          <div class="field">
+            <label data-i18n="f_phone">Teléfono / WhatsApp</label>
+            <input type="tel" id="f_phone" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label data-i18n="f_checkin">Check-in</label>
+            <input type="date" id="f_checkin">
+          </div>
+          <div class="field">
+            <label data-i18n="f_checkout">Check-out</label>
+            <input type="date" id="f_checkout">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label data-i18n="f_guests">Huéspedes</label>
+            <input type="number" id="f_guests" min="1" value="2">
+          </div>
+          <div class="field">
+            <label data-i18n="f_apt">Departamento de interés</label>
+            <select id="f_apt">
+              <option data-i18n="f_apt_1">Llave 01 — O'Higgins</option>
+              <option data-i18n="f_apt_2">Llave 02 — SFe</option>
+              <option data-i18n="f_apt_3">Aún no lo decidí</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label data-i18n="f_email">Email</label>
+          <input type="email" id="f_email" required>
+        </div>
+        <div class="field">
+          <label data-i18n="f_msg">Mensaje</label>
+          <textarea id="f_msg" placeholder=""></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-wa"><span data-i18n="f_send_wa">Enviar por WhatsApp</span></button>
+          <button type="button" id="sendEmail" class="btn btn-book"><span data-i18n="f_send_mail">Enviar por email</span></button>
+        </div>
+        <p class="form-note" data-i18n="f_note">Al enviar, se abrirá WhatsApp o tu cliente de correo con los datos cargados. No almacenamos tu información en este sitio.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo" style="margin-bottom:14px;">BAHÍA <span>PREMIUM</span></div>
+        <p style="font-size:14px; max-width:280px; opacity:.75;" data-i18n="foot_desc">Alquiler temporario premium en Bahía Blanca - Buenos Aires - Argentina. Dos direcciones, un mismo estándar de hospitalidad.</p>
+      </div>
+      <div>
+        <h5 data-i18n="foot_nav">Navegación</h5>
+        <a href="#llave-01" data-i18n="nav_l1">Llave 01 · O'Higgins</a>
+        <a href="#llave-02" data-i18n="nav_l2">Llave 02 · SFe</a>
+        <a href="#porque" data-i18n="nav_porque">Por qué elegirnos</a>
+        <a href="#contacto" data-i18n="nav_contacto">Contacto</a>
+      </div>
+      <div>
+        <h5 data-i18n="foot_follow">Seguinos</h5>
+        <div class="social-row">
+          <a href="#" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 9h3V6h-3a3 3 0 00-3 3v2H9v3h2v6h3v-6h3l1-3h-4V9a1 1 0 011-1z"/></svg></a>
+          <a href="https://wa.me/5492911234567" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.5 3.5A11 11 0 003.7 17L2 22l5.2-1.7A11 11 0 1020.5 3.5z"/></svg></a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Bahía Premium. <span data-i18n="foot_rights">Todos los derechos reservados.</span></span>
+      <span data-i18n="foot_note">Sitio de demostración — reemplazar direcciones, precios, fotos y enlaces por datos reales.</span>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/5492911234567?text=Hola!%20Quiero%20consultar%20disponibilidad" class="fab-wa" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M20.5 3.5A11 11 0 003.7 17L2 22l5.2-1.7A11 11 0 1020.5 3.5zM12 20a8 8 0 01-4.1-1.1l-.3-.2-3 1 1-2.9-.2-.3A8 8 0 1112 20zm4.4-5.9c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.7.9-.3.2-.5.1a6.6 6.6 0 01-1.9-1.2 7.2 7.2 0 01-1.3-1.7c-.1-.2 0-.4.1-.5l.4-.4.2-.4v-.3c0-.1-.5-1.3-.7-1.8s-.4-.4-.5-.4h-.5a.9.9 0 00-.6.3 2.8 2.8 0 00-.9 2.1c0 1.2.9 2.4 1 2.6a8.6 8.6 0 003.7 3.4c1.3.6 1.8.6 2.4.5a2 2 0 001.3-1 1.6 1.6 0 000-1c-.1-.1-.3-.2-.5-.3z"/></svg>
+</a>
+
+<script>
+// -------- mobile nav --------
+const burger = document.getElementById('burger');
+const navLinks = document.getElementById('navLinks');
+burger.addEventListener('click', () => navLinks.classList.toggle('open'));
+navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+// -------- i18n --------
+const translations = {
+  nav_inicio:{en:"Home"}, nav_l1:{en:"Key 01 · O'Higgins"}, nav_l2:{en:"Key 02 · SFe"},
+  nav_porque:{en:"Why choose us"}, nav_contacto:{en:"Contact"},
+  hero_eyebrow:{en:"Short-term rentals · Bahía Blanca - Buenos Aires - Argentina"},
+  hero_title:{en:'Two addresses. <em>One same standard.</em>'},
+  hero_sub:{en:"Two premium apartments, curated down to the last detail. You deserve the best stay in Bahía Blanca, which is why we offer personal, human attention, a great location, private parking, and details in each one that set them apart. Family trips, business travel, or just passing through the city — Bahía Premium: more than a hotel."},
+  hero_cta1:{en:"See the apartments"}, hero_cta2:{en:"Check availability"},
+  apt1_zone:{en:"O'HIGGINS, BAHÍA BLANCA - BUENOS AIRES - ARGENTINA"}, apt1_title:{en:"O'Higgins Bahía Premium"},
+  apt1_desc:{en:"Upscale building in downtown Bahía Blanca, on O'Higgins street, steps from shops, banks and the city's cultural life. Balcony, natural light all day and quality finishes. Ideal for business travelers or couples. Exact address shared upon booking."},
+  apt1_f1:{en:"45 m² / 484 sq ft"}, apt1_f2:{en:"2 guests"}, apt1_f3:{en:"1 bedroom"}, apt1_f4:{en:"1 full bathroom"},
+  apt2_zone:{en:"SANTA FE, BAHÍA BLANCA - BUENOS AIRES - ARGENTINA"}, apt2_title:{en:"SFe Bahía Premium"},
+  apt2_desc:{en:"Modern apartment on Santa Fe street, in one of Bahía Blanca's most sought-after areas, with its own private parking spot and details that set it apart. Great for families, work teams or extended stays."},
+  apt2_f1:{en:"78 m² / 840 sq ft"}, apt2_f2:{en:"4 guests"}, apt2_f3:{en:"2 bedrooms"}, apt2_f4:{en:"2 full bathrooms"},
+  chip_wifi:{en:"Fiber Wi-Fi"}, chip_ac:{en:"Heating/AC"}, chip_kitchen:{en:"Full kitchen"}, chip_laundry:{en:"Washer"},
+  chip_security:{en:"24h security"}, chip_selfcheckin:{en:"Self check-in"}, chip_pool:{en:"Building pool"},
+  chip_gym:{en:"Gym"}, chip_garage:{en:"Own parking spot"}, chip_view:{en:"Balcony"}, chip_smarttv:{en:"Smart TV"},
+  from:{en:"From"}, per_night:{en:"/ night"},
+  ph_1:{en:"Living room · replace with real photo"}, ph_2:{en:"Bedroom"}, ph_3:{en:"Kitchen"}, ph_4:{en:"River view"}, ph_5:{en:"Pool"},
+  std_eyebrow:{en:"How we work"}, std_title:{en:"The same standards an international guest expects"},
+  std_sub:{en:"Booking remotely raises questions. That's why we follow the same practices as global hospitality platforms."},
+  std1_t:{en:"24h self check-in"}, std1_p:{en:"Access via lockbox or smart lock, no need to match a schedule."},
+  std2_t:{en:"Flexible cancellation"}, std2_p:{en:"Free cancellation up to 48h before check-in on standard rates."},
+  std3_t:{en:"Multilingual support"}, std3_p:{en:"Spanish, English and Portuguese over WhatsApp, before, during and after the stay."},
+  std4_t:{en:"Transparent pricing"}, std4_p:{en:"No hidden fees: what you see in the quote is what you pay."},
+  std5_t:{en:"Professional cleaning"}, std5_p:{en:"Cleaning and hygiene protocol between every stay, plus welcome amenities."},
+  std6_t:{en:"International payment"}, std6_p:{en:"Through Booking or Airbnb, with each platform's guest protection."},
+  std7_t:{en:"Invoice / receipt"}, std7_p:{en:"Proof of stay available for corporate expenses or immigration paperwork."},
+  std8_t:{en:"Support during your stay"}, std8_p:{en:"A direct WhatsApp line to the host for anything you need."},
+  testi_eyebrow:{en:"Guests"}, testi_title:{en:"What past guests are saying"},
+  testi_sub:{en:"Example reviews — replace with real Booking / Airbnb / Google feedback."},
+  testi1:{en:'"Great location and check-in was super simple, we arrived late at night and had no issues."'},
+  testi2:{en:'"The SFe apartment beat the photos. Having our own parking spot was a huge plus for traveling with the car and the kids."'},
+  testi3:{en:'"Instant replies on WhatsApp for every question. You can tell they host international guests often."'},
+  contact_eyebrow:{en:"Contact"}, contact_title:{en:"Tell us about your stay"},
+  contact_sub:{en:"Fill out the form and we'll reply by WhatsApp or email the same day."},
+  ci_title:{en:"Direct contact"}, ci_sub:{en:"You can also message us directly if you already know which apartment you want."},
+  ci_coverage:{en:"Areas"}, ci_hours:{en:"Support hours"}, ci_hours_val:{en:"Every day, 9am–10pm (ART)"},
+  f_name:{en:"Full name"}, f_phone:{en:"Phone / WhatsApp"}, f_checkin:{en:"Check-in"}, f_checkout:{en:"Check-out"},
+  f_guests:{en:"Guests"}, f_apt:{en:"Apartment of interest"}, f_apt_1:{en:"Key 01 — O'Higgins"}, f_apt_2:{en:"Key 02 — SFe"},
+  f_apt_3:{en:"Not sure yet"}, f_email:{en:"Email"}, f_msg:{en:"Message"},
+  f_send_wa:{en:"Send via WhatsApp"}, f_send_mail:{en:"Send via email"},
+  f_note:{en:"On submit, WhatsApp or your email client opens pre-filled with your details. Nothing is stored on this site."},
+  foot_desc:{en:"Premium short-term rentals in Bahía Blanca - Buenos Aires - Argentina. Two addresses, one same standard of hospitality."},
+  foot_nav:{en:"Navigation"}, foot_follow:{en:"Follow us"}, foot_rights:{en:"All rights reserved."},
+  foot_note:{en:"Demo site — replace addresses, prices, photos and links with real data."}
+};
+let currentLang = 'es';
+const originals = new Map();
+document.querySelectorAll('[data-i18n]').forEach(el => originals.set(el, el.innerHTML));
+document.getElementById('langToggle').addEventListener('click', () => {
+  currentLang = currentLang === 'es' ? 'en' : 'es';
+  document.getElementById('langToggle').textContent = currentLang === 'es' ? 'EN' : 'ES';
+  document.documentElement.lang = currentLang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if(currentLang === 'en' && translations[key]){
+      el.innerHTML = translations[key].en;
+    } else {
+      el.innerHTML = originals.get(el);
+    }
+  });
+});
+
+// -------- contact form: whatsapp / email --------
+const form = document.getElementById('contactForm');
+function buildMessage(){
+  const name = document.getElementById('f_name').value;
+  const phone = document.getElementById('f_phone').value;
+  const checkin = document.getElementById('f_checkin').value;
+  const checkout = document.getElementById('f_checkout').value;
+  const guests = document.getElementById('f_guests').value;
+  const apt = document.getElementById('f_apt').value;
+  const email = document.getElementById('f_email').value;
+  const msg = document.getElementById('f_msg').value;
+  return `Hola! Soy ${name} (${phone} / ${email}).%0A`
+    + `Me interesa: ${apt}%0A`
+    + `Check-in: ${checkin || '-'} | Check-out: ${checkout || '-'}%0A`
+    + `Huéspedes: ${guests}%0A`
+    + `Mensaje: ${encodeURIComponent(msg)}`;
+}
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  if(!form.checkValidity()){ form.reportValidity(); return; }
+  const text = buildMessage();
+  window.open(`https://wa.me/5492911234567?text=${text}`, '_blank');
+});
+document.getElementById('sendEmail').addEventListener('click', () => {
+  if(!form.checkValidity()){ form.reportValidity(); return; }
+  const name = document.getElementById('f_name').value;
+  const email = document.getElementById('f_email').value;
+  const subject = encodeURIComponent('Consulta de disponibilidad — Bahía Premium');
+  const body = buildMessage().replace(/%0A/g, '\n');
+  window.location.href = `mailto:reservas@bahiapremium.com.ar?subject=${subject}&body=${encodeURIComponent(`De: ${name} <${email}>\n\n`)}${encodeURIComponent(decodeURIComponent(body))}`;
+});
+</script>
+</body>
+</html>
