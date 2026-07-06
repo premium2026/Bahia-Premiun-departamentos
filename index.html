@@ -137,7 +137,7 @@
 
   /* -------- apartment blocks -------- */
   .apt{border-top:1px solid var(--stone-dark);}
-  .apt-grid{display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:start;}
+  .apt-grid{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:60px; align-items:start;}
   @media(max-width:880px){.apt-grid{grid-template-columns:1fr; gap:36px;}}
   .apt.reverse .apt-grid{direction:rtl;}
   .apt.reverse .apt-grid > *{direction:ltr;}
@@ -163,7 +163,7 @@
   .ph svg{position:absolute; top:14px; right:14px; opacity:.35; width:22px; height:22px;}
 
   /* -------- dynamic photo gallery -------- */
-  .gallery-wrap{display:flex; flex-direction:column; gap:14px;}
+  .gallery-wrap{display:flex; flex-direction:column; gap:14px; min-width:0;}
   .gallery-tabs-label{
     font-family:'Space Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.08em;
     color:var(--text-muted); margin-bottom:2px;
