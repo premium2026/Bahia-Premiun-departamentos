@@ -740,7 +740,7 @@ const apartments = {
     }
   },
   santafe: {
-    basePath: 'images/santafe',
+    basePath: 'images/Santa Fe Bahia Premium',
     rooms: {
       living:     { label: 'Living',      folder: 'living',        pattern: "santafe.living comedor ({n}).jpg", count: 42 },
       cocina:     { label: 'Cocina',      folder: 'cocina',        pattern: "santafe.cocina ({n}).jpg", count: 26 },
@@ -756,14 +756,15 @@ function buildImageList(apt, roomKey){
   const room = apartments[apt].rooms[roomKey];
   const base = apartments[apt].basePath;
   const list = [];
+  const baseEncoded = base.split('/').map(encodeURIComponent).join('/');
   const folderEncoded = room.folder.split('/').map(encodeURIComponent).join('/');
   if(room.count === 1 && !room.pattern.includes('{n}')){
-    list.push(`${base}/${folderEncoded}/${encodeURIComponent(room.pattern)}`);
+    list.push(`${baseEncoded}/${folderEncoded}/${encodeURIComponent(room.pattern)}`);
     return list;
   }
   for(let i = 1; i <= room.count; i++){
     const filename = room.pattern.replace('{n}', i);
-    list.push(`${base}/${folderEncoded}/${encodeURIComponent(filename)}`);
+    list.push(`${baseEncoded}/${folderEncoded}/${encodeURIComponent(filename)}`);
   }
   return list;
 }
