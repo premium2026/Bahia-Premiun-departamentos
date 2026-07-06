@@ -67,29 +67,38 @@
     </div>
 
     <div class="card" id="formCard" style="display:none;">
-      <h2>Contacto y redes</h2>
+      <h2>Contacto</h2>
       <label>Número de WhatsApp (solo números, con código de país. Ej: 5492911234567)</label>
       <input id="fWhatsapp">
-      <label>Link de Instagram</label>
-      <input id="fInstagram">
-      <label>Link de Facebook</label>
-      <input id="fFacebook">
+      <p class="hint">El WhatsApp es compartido entre los dos deptos. Instagram, Facebook y Email son independientes para cada uno (más abajo).</p>
 
-      <div class="apt-title">Llave 01 — O'Higgins</div>
+      <div class="apt-title">Depto. O'Higgins 530</div>
       <label>Precio por noche (USD, solo el número)</label>
       <input id="fPriceOhiggins" type="number">
       <label>Link de Booking.com</label>
       <input id="fBookingOhiggins">
       <label>Link de Airbnb</label>
       <input id="fAirbnbOhiggins">
+      <label>Instagram</label>
+      <input id="fInstagramOhiggins">
+      <label>Facebook</label>
+      <input id="fFacebookOhiggins">
+      <label>Email</label>
+      <input id="fEmailOhiggins">
 
-      <div class="apt-title">Llave 02 — SFe</div>
+      <div class="apt-title">Depto. Santa Fe 56</div>
       <label>Precio por noche (USD, solo el número)</label>
       <input id="fPriceSantafe" type="number">
       <label>Link de Booking.com</label>
       <input id="fBookingSantafe">
       <label>Link de Airbnb</label>
       <input id="fAirbnbSantafe">
+      <label>Instagram</label>
+      <input id="fInstagramSantafe">
+      <label>Facebook</label>
+      <input id="fFacebookSantafe">
+      <label>Email</label>
+      <input id="fEmailSantafe">
 
       <button id="saveBtn">Guardar cambios en el sitio</button>
       <div class="msg" id="saveMsg"></div>
@@ -135,14 +144,18 @@ document.getElementById('loadBtn').addEventListener('click', async () => {
     const data = JSON.parse(decodeURIComponent(escape(atob(json.content))));
 
     document.getElementById('fWhatsapp').value = data.whatsapp || '';
-    document.getElementById('fInstagram').value = data.social?.instagram || '';
-    document.getElementById('fFacebook').value = data.social?.facebook || '';
     document.getElementById('fPriceOhiggins').value = data.apartments?.ohiggins?.price || '';
     document.getElementById('fBookingOhiggins').value = data.apartments?.ohiggins?.booking || '';
     document.getElementById('fAirbnbOhiggins').value = data.apartments?.ohiggins?.airbnb || '';
+    document.getElementById('fInstagramOhiggins').value = data.apartments?.ohiggins?.instagram || '';
+    document.getElementById('fFacebookOhiggins').value = data.apartments?.ohiggins?.facebook || '';
+    document.getElementById('fEmailOhiggins').value = data.apartments?.ohiggins?.email || '';
     document.getElementById('fPriceSantafe').value = data.apartments?.santafe?.price || '';
     document.getElementById('fBookingSantafe').value = data.apartments?.santafe?.booking || '';
     document.getElementById('fAirbnbSantafe').value = data.apartments?.santafe?.airbnb || '';
+    document.getElementById('fInstagramSantafe').value = data.apartments?.santafe?.instagram || '';
+    document.getElementById('fFacebookSantafe').value = data.apartments?.santafe?.facebook || '';
+    document.getElementById('fEmailSantafe').value = data.apartments?.santafe?.email || '';
 
     document.getElementById('formCard').style.display = 'block';
     loadMsg.className = 'msg ok';
@@ -162,20 +175,22 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
 
   const newData = {
     whatsapp: document.getElementById('fWhatsapp').value.trim(),
-    social: {
-      instagram: document.getElementById('fInstagram').value.trim(),
-      facebook: document.getElementById('fFacebook').value.trim()
-    },
     apartments: {
       ohiggins: {
         price: Number(document.getElementById('fPriceOhiggins').value),
         booking: document.getElementById('fBookingOhiggins').value.trim(),
-        airbnb: document.getElementById('fAirbnbOhiggins').value.trim()
+        airbnb: document.getElementById('fAirbnbOhiggins').value.trim(),
+        instagram: document.getElementById('fInstagramOhiggins').value.trim(),
+        facebook: document.getElementById('fFacebookOhiggins').value.trim(),
+        email: document.getElementById('fEmailOhiggins').value.trim()
       },
       santafe: {
         price: Number(document.getElementById('fPriceSantafe').value),
         booking: document.getElementById('fBookingSantafe').value.trim(),
-        airbnb: document.getElementById('fAirbnbSantafe').value.trim()
+        airbnb: document.getElementById('fAirbnbSantafe').value.trim(),
+        instagram: document.getElementById('fInstagramSantafe').value.trim(),
+        facebook: document.getElementById('fFacebookSantafe').value.trim(),
+        email: document.getElementById('fEmailSantafe').value.trim()
       }
     }
   };
