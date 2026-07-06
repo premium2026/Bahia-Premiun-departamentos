@@ -899,6 +899,6 @@ document.getElementById('sendEmail').addEventListener('click', () => {
   const body = buildMessage().replace(/%0A/g, '\n');
   window.location.href = `mailto:reservas@bahiapremium.com.ar?subject=${subject}&body=${encodeURIComponent(`De: ${name} <${email}>\n\n`)}${encodeURIComponent(decodeURIComponent(body))}`;
 });
-</script>
+</script> 
 </body>
 </html> 
