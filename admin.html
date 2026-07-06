@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Bahía Premium</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14212B; --brass:#A9814C; --brass-light:#C9A66B; --stone:#EAE3D3; --paper:#F8F5EC;
+    --text-dark:#20211D; --text-muted:#5B5A52; --ok:#3F5443; --err:#a83232;
+  }
+  *{box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif; background:var(--paper); color:var(--text-dark); margin:0; padding:24px;}
+  .wrap{max-width:640px; margin:0 auto;}
+  h1{font-size:22px; margin-bottom:4px;}
+  .sub{color:var(--text-muted); font-size:13.5px; margin-bottom:28px;}
+  .card{background:#fff; border:1px solid var(--stone); border-radius:4px; padding:24px; margin-bottom:20px;}
+  h2{font-size:15px; text-transform:uppercase; letter-spacing:.05em; color:var(--brass); margin-bottom:16px; font-family:'Space Mono',monospace;}
+  label{display:block; font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-muted); margin-bottom:6px; margin-top:14px;}
+  label:first-child{margin-top:0;}
+  input{width:100%; padding:11px 13px; border:1px solid var(--stone); border-radius:2px; font-size:14.5px; background:var(--paper);}
+  input:focus{outline:2px solid var(--brass-light);}
+  button{
+    font-family:'Inter',sans-serif; font-weight:600; font-size:14.5px; padding:13px 22px; border:none; border-radius:2px;
+    background:var(--ink); color:#fff; cursor:pointer; margin-top:10px;
+  }
+  button:hover{background:#1E313E;}
+  button:disabled{opacity:.5; cursor:default;}
+  .msg{font-size:13.5px; margin-top:14px; padding:10px 14px; border-radius:2px; display:none;}
+  .msg.ok{background:#e7efe8; color:var(--ok); display:block;}
+  .msg.err{background:#fbe9e9; color:var(--err); display:block;}
+  #gate, #panel{display:none;}
+  .hint{font-size:12px; color:var(--text-muted); margin-top:6px;}
+  .hint a{color:var(--brass);}
+  .apt-title{font-weight:600; margin-top:20px; margin-bottom:4px; font-size:14.5px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Panel de administración — Bahía Premium</h1>
+  <p class="sub">Acá podés cambiar WhatsApp, Instagram, Facebook, precios y links de Booking/Airbnb. Los cambios se guardan directo en el repositorio de GitHub.</p>
+
+  <div class="card" id="gate">
+    <h2>Acceso</h2>
+    <label>Clave de acceso</label>
+    <input type="password" id="gatePass" placeholder="••••••••">
+    <button id="gateBtn">Entrar</button>
+    <p class="hint">Esta clave solo evita que un visitante casual entre acá por error. La seguridad real la da tu Token de GitHub (siguiente paso).</p>
+  </div>
+
+  <div id="panel">
+    <div class="card">
+      <h2>Conexión con GitHub</h2>
+      <label>Usuario / Repositorio</label>
+      <input id="repoPath" value="premium2026/Bahia-Premiun-departamentos">
+      <label>Token de acceso personal (GitHub)</label>
+      <input type="password" id="ghToken" placeholder="ghp_...">
+      <p class="hint">
+        Generalo en GitHub → foto de perfil → Settings → Developer settings → Personal access tokens →
+        Fine-grained tokens → "Generate new token". Dale permiso <b>Contents: Read and write</b> solo para este repositorio.
+        No compartas este token con nadie.
+      </p>
+      <button id="loadBtn">Cargar datos actuales</button>
+      <div class="msg" id="loadMsg"></div>
+    </div>
+
+    <div class="card" id="formCard" style="display:none;">
+      <h2>Contacto y redes</h2>
+      <label>Número de WhatsApp (solo números, con código de país. Ej: 5492911234567)</label>
+      <input id="fWhatsapp">
+      <label>Link de Instagram</label>
+      <input id="fInstagram">
+      <label>Link de Facebook</label>
+      <input id="fFacebook">
+
+      <div class="apt-title">Llave 01 — O'Higgins</div>
+      <label>Precio por noche (USD, solo el número)</label>
+      <input id="fPriceOhiggins" type="number">
+      <label>Link de Booking.com</label>
+      <input id="fBookingOhiggins">
+      <label>Link de Airbnb</label>
+      <input id="fAirbnbOhiggins">
+
+      <div class="apt-title">Llave 02 — SFe</div>
+      <label>Precio por noche (USD, solo el número)</label>
+      <input id="fPriceSantafe" type="number">
+      <label>Link de Booking.com</label>
+      <input id="fBookingSantafe">
+      <label>Link de Airbnb</label>
+      <input id="fAirbnbSantafe">
+
+      <button id="saveBtn">Guardar cambios en el sitio</button>
+      <div class="msg" id="saveMsg"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Clave simple solo para desalentar visitas casuales — NO es seguridad real.
+// Cambiala acá si querés otra:
+const ACCESS_PASSWORD = 'bahia2026';
+
+document.getElementById('gate').style.display = 'block';
+document.getElementById('gateBtn').addEventListener('click', () => {
+  if(document.getElementById('gatePass').value === ACCESS_PASSWORD){
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('panel').style.display = 'block';
+  } else {
+    alert('Clave incorrecta.');
+  }
+});
+
+let currentSha = null;
+
+function apiUrl(){
+  const repo = document.getElementById('repoPath').value.trim();
+  return `https://api.github.com/repos/${repo}/contents/data.json`;
+}
+
+document.getElementById('loadBtn').addEventListener('click', async () => {
+  const token = document.getElementById('ghToken').value.trim();
+  const loadMsg = document.getElementById('loadMsg');
+  loadMsg.className = 'msg';
+  loadMsg.textContent = '';
+  if(!token){ loadMsg.className = 'msg err'; loadMsg.textContent = 'Pegá tu token de GitHub primero.'; return; }
+  try{
+    const res = await fetch(apiUrl(), {
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json' }
+    });
+    if(!res.ok) throw new Error(`GitHub respondió ${res.status}. Revisá el token y el nombre del repositorio.`);
+    const json = await res.json();
+    currentSha = json.sha;
+    const data = JSON.parse(decodeURIComponent(escape(atob(json.content))));
+
+    document.getElementById('fWhatsapp').value = data.whatsapp || '';
+    document.getElementById('fInstagram').value = data.social?.instagram || '';
+    document.getElementById('fFacebook').value = data.social?.facebook || '';
+    document.getElementById('fPriceOhiggins').value = data.apartments?.ohiggins?.price || '';
+    document.getElementById('fBookingOhiggins').value = data.apartments?.ohiggins?.booking || '';
+    document.getElementById('fAirbnbOhiggins').value = data.apartments?.ohiggins?.airbnb || '';
+    document.getElementById('fPriceSantafe').value = data.apartments?.santafe?.price || '';
+    document.getElementById('fBookingSantafe').value = data.apartments?.santafe?.booking || '';
+    document.getElementById('fAirbnbSantafe').value = data.apartments?.santafe?.airbnb || '';
+
+    document.getElementById('formCard').style.display = 'block';
+    loadMsg.className = 'msg ok';
+    loadMsg.textContent = 'Datos actuales cargados correctamente.';
+  } catch(err){
+    loadMsg.className = 'msg err';
+    loadMsg.textContent = 'Error: ' + err.message;
+  }
+});
+
+document.getElementById('saveBtn').addEventListener('click', async () => {
+  const token = document.getElementById('ghToken').value.trim();
+  const saveMsg = document.getElementById('saveMsg');
+  saveMsg.className = 'msg';
+  saveMsg.textContent = '';
+  if(!token || !currentSha){ saveMsg.className = 'msg err'; saveMsg.textContent = 'Primero cargá los datos actuales.'; return; }
+
+  const newData = {
+    whatsapp: document.getElementById('fWhatsapp').value.trim(),
+    social: {
+      instagram: document.getElementById('fInstagram').value.trim(),
+      facebook: document.getElementById('fFacebook').value.trim()
+    },
+    apartments: {
+      ohiggins: {
+        price: Number(document.getElementById('fPriceOhiggins').value),
+        booking: document.getElementById('fBookingOhiggins').value.trim(),
+        airbnb: document.getElementById('fAirbnbOhiggins').value.trim()
+      },
+      santafe: {
+        price: Number(document.getElementById('fPriceSantafe').value),
+        booking: document.getElementById('fBookingSantafe').value.trim(),
+        airbnb: document.getElementById('fAirbnbSantafe').value.trim()
+      }
+    }
+  };
+
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(newData, null, 2))));
+
+  try{
+    const res = await fetch(apiUrl(), {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: 'Actualización desde panel admin',
+        content: content,
+        sha: currentSha
+      })
+    });
+    if(!res.ok){
+      const errJson = await res.json().catch(() => ({}));
+      throw new Error(errJson.message || `GitHub respondió ${res.status}`);
+    }
+    const result = await res.json();
+    currentSha = result.content.sha;
+    saveMsg.className = 'msg ok';
+    saveMsg.textContent = '¡Guardado! Los cambios van a verse en el sitio en 1-2 minutos.';
+  } catch(err){
+    saveMsg.className = 'msg err';
+    saveMsg.textContent = 'Error al guardar: ' + err.message;
+  }
+});
+</script>
+</body>
+</html>

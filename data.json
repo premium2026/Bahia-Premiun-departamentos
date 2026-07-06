@@ -1,0 +1,19 @@
+{
+  "whatsapp": "5492911234567",
+  "social": {
+    "instagram": "https://instagram.com/bahiapremium",
+    "facebook": "https://facebook.com/bahiapremium"
+  },
+  "apartments": {
+    "ohiggins": {
+      "price": 120,
+      "booking": "https://www.booking.com/",
+      "airbnb": "https://www.airbnb.com.ar/"
+    },
+    "santafe": {
+      "price": 185,
+      "booking": "https://www.booking.com/",
+      "airbnb": "https://www.airbnb.com.ar/"
+    }
+  }
+}
