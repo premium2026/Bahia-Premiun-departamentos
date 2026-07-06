@@ -164,34 +164,48 @@
 
   /* -------- dynamic photo gallery -------- */
   .gallery-wrap{display:flex; flex-direction:column; gap:14px;}
-  .gallery-main{
-    position:relative; width:100%; aspect-ratio:4/3; border-radius:2px; overflow:hidden;
-    background:var(--stone); cursor:zoom-in;
+  .gallery-tabs-label{
+    font-family:'Space Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--text-muted); margin-bottom:2px;
   }
-  .gallery-main img{width:100%; height:100%; object-fit:cover; display:block;}
-  .gallery-main .gcount{
-    position:absolute; bottom:12px; right:12px; background:rgba(20,33,43,.75); color:var(--text-light);
-    font-family:'Space Mono',monospace; font-size:11.5px; padding:5px 10px; border-radius:20px;
-  }
-  .gallery-thumbs{display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;}
-  .gallery-thumbs::-webkit-scrollbar{height:6px;}
-  .gallery-thumbs::-webkit-scrollbar-thumb{background:var(--stone-dark); border-radius:4px;}
-  .gallery-thumbs img{
-    width:64px; height:64px; object-fit:cover; border-radius:2px; flex-shrink:0; cursor:pointer;
-    opacity:.55; transition:opacity .15s, outline .15s; outline:2px solid transparent;
-  }
-  .gallery-thumbs img.active{opacity:1; outline-color:var(--brass);}
   .gallery-tabs{display:flex; gap:8px; flex-wrap:wrap;}
   .gtab{
-    font-family:'Space Mono',monospace; font-size:11.5px; text-transform:uppercase; letter-spacing:.04em;
-    padding:7px 13px; border:1px solid var(--stone-dark); border-radius:20px; background:transparent;
+    font-family:'Space Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:.04em;
+    padding:8px 15px; border:1px solid var(--stone-dark); border-radius:20px; background:var(--paper);
     color:var(--text-muted); cursor:pointer; transition:all .15s;
   }
   .gtab.active{background:var(--ink); border-color:var(--ink); color:var(--text-light);}
   .gtab:disabled{opacity:.35; cursor:default;}
+  .gallery-main{
+    position:relative; width:100%; height:min(46vh, 380px); border-radius:2px; overflow:hidden;
+    background:var(--stone); cursor:zoom-in; touch-action:pan-y; user-select:none;
+  }
+  .gallery-main img{width:100%; height:100%; object-fit:contain; display:block; pointer-events:none; background:var(--stone);}
+  .gallery-main .gcount{
+    position:absolute; bottom:10px; right:10px; background:rgba(20,33,43,.75); color:var(--text-light);
+    font-family:'Space Mono',monospace; font-size:11px; padding:4px 9px; border-radius:20px; pointer-events:none;
+  }
+  .gnav{
+    position:absolute; top:50%; transform:translateY(-50%); background:rgba(20,33,43,.55); border:none;
+    color:var(--text-light); width:36px; height:36px; border-radius:50%; font-size:16px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; z-index:2;
+  }
+  .gnav:hover{background:rgba(20,33,43,.8);}
+  .gprev{left:10px;} .gnext{right:10px;}
+  .gallery-thumbs{display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;}
+  .gallery-thumbs::-webkit-scrollbar{height:6px;}
+  .gallery-thumbs::-webkit-scrollbar-thumb{background:var(--stone-dark); border-radius:4px;}
+  .gallery-thumbs img{
+    width:56px; height:56px; object-fit:cover; border-radius:2px; flex-shrink:0; cursor:pointer;
+    opacity:.55; transition:opacity .15s, outline .15s; outline:2px solid transparent;
+  }
+  .gallery-thumbs img.active{opacity:1; outline-color:var(--brass);}
   .gallery-empty{
-    display:flex; align-items:center; justify-content:center; aspect-ratio:4/3; background:var(--stone);
+    display:flex; align-items:center; justify-content:center; height:min(46vh, 380px); background:var(--stone);
     color:var(--text-muted); font-size:13.5px; border-radius:2px; text-align:center; padding:20px;
+  }
+  @media(max-width:640px){
+    .gallery-main, .gallery-empty{ height:52vw; min-height:220px; }
   }
 
   /* -------- lightbox -------- */
@@ -779,7 +793,7 @@ function renderGallery(aptKey){
   if(!galleryState[aptKey]) galleryState[aptKey] = { room: roomKeys[0], index: 0 };
   const state = galleryState[aptKey];
 
-  let tabsHtml = '<div class="gallery-tabs">';
+  let tabsHtml = '<div class="gallery-tabs-label">Elegí un ambiente</div><div class="gallery-tabs">';
   roomKeys.forEach(rk => {
     const r = rooms[rk];
     const disabled = r.count === 0 ? 'disabled' : '';
@@ -795,9 +809,12 @@ function renderGallery(aptKey){
     bodyHtml = `<div class="gallery-empty">Fotos de "${rooms[state.room].label}" próximamente</div>`;
   } else {
     if(state.index >= images.length) state.index = 0;
+    const showArrows = images.length > 1;
     bodyHtml = `
       <div class="gallery-main" data-apt="${aptKey}">
+        ${showArrows ? `<button class="gnav gprev" data-apt="${aptKey}" data-dir="-1" aria-label="Anterior">&#10094;</button>` : ''}
         <img src="${images[state.index]}" alt="${rooms[state.room].label}">
+        ${showArrows ? `<button class="gnav gnext" data-apt="${aptKey}" data-dir="1" aria-label="Siguiente">&#10095;</button>` : ''}
         <span class="gcount">${state.index + 1} / ${images.length}</span>
       </div>
       <div class="gallery-thumbs">
@@ -820,10 +837,43 @@ function renderGallery(aptKey){
       renderGallery(aptKey);
     });
   });
+  container.querySelectorAll('.gnav').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      stepGallery(aptKey, parseInt(btn.dataset.dir, 10));
+    });
+  });
   const mainImg = container.querySelector('.gallery-main');
   if(mainImg){
     mainImg.addEventListener('click', () => openLightbox(aptKey));
+    attachSwipe(mainImg, aptKey);
   }
+}
+
+function stepGallery(aptKey, dir){
+  const state = galleryState[aptKey];
+  const images = buildImageList(aptKey, state.room);
+  if(images.length < 2) return;
+  state.index = (state.index + dir + images.length) % images.length;
+  renderGallery(aptKey);
+}
+
+function attachSwipe(el, aptKey){
+  let startX = 0, startY = 0, tracking = false;
+  el.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    tracking = true;
+  }, { passive: true });
+  el.addEventListener('touchend', (e) => {
+    if(!tracking) return;
+    tracking = false;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)){
+      stepGallery(aptKey, dx < 0 ? 1 : -1);
+    }
+  }, { passive: true });
 }
 
 renderGallery('ohiggins');
@@ -867,6 +917,15 @@ document.addEventListener('keydown', (e) => {
   if(e.key === 'ArrowLeft') document.getElementById('lbPrev').click();
   if(e.key === 'ArrowRight') document.getElementById('lbNext').click();
 });
+lightbox.addEventListener('touchstart', (e) => { lightbox.dataset.sx = e.touches[0].clientX; lightbox.dataset.sy = e.touches[0].clientY; }, { passive: true });
+lightbox.addEventListener('touchend', (e) => {
+  const dx = e.changedTouches[0].clientX - parseFloat(lightbox.dataset.sx || 0);
+  const dy = e.changedTouches[0].clientY - parseFloat(lightbox.dataset.sy || 0);
+  if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)){
+    (dx < 0 ? document.getElementById('lbNext') : document.getElementById('lbPrev')).click();
+  }
+}, { passive: true });
+
 
 // -------- contact form: whatsapp / email --------
 const form = document.getElementById('contactForm');
@@ -901,4 +960,4 @@ document.getElementById('sendEmail').addEventListener('click', () => {
 });
 </script>
 </body>
-</html> 
+</html>
