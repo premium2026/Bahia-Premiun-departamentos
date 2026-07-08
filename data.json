@@ -1,16 +1,8 @@
 {
-<<<<<<< HEAD
   "whatsapp": "5492911234567",
-=======
-  "whatsapp": "5492916443282",
-  "social": {
-    "instagram": "https://www.instagram.com/ohigginsbahiapremium/",
-    "facebook": ""
-  },
->>>>>>> 72325324a8947637829a23a18e4aeea708c3768b
   "apartments": {
     "ohiggins": {
-      "price": 80,
+      "price": 120,
       "booking": "https://www.booking.com/",
       "airbnb": "https://www.airbnb.com.ar/",
       "instagram": "https://instagram.com/ohigginsbahiapremium",
@@ -18,7 +10,7 @@
       "email": "ohiggins@bahiapremium.com.ar"
     },
     "santafe": {
-      "price": 80,
+      "price": 185,
       "booking": "https://www.booking.com/",
       "airbnb": "https://www.airbnb.com.ar/",
       "instagram": "https://instagram.com/santafebahiapremium",
