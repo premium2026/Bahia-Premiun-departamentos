@@ -1,21 +1,21 @@
 {
-  "whatsapp": "5492911234567",
+  "whatsapp": "5492916443282",
   "apartments": {
     "ohiggins": {
-      "price": 120,
-      "booking": "https://www.booking.com/",
+      "price": 80,
+      "booking": "https://www.booking.com/ohigginsbahiapremium",
       "airbnb": "https://www.airbnb.com.ar/",
       "instagram": "https://instagram.com/ohigginsbahiapremium",
       "facebook": "https://facebook.com/ohigginsbahiapremium",
-      "email": "ohiggins@bahiapremium.com.ar"
+      "email": "ohigginsbahiapremium@gmail.com.ar"
     },
     "santafe": {
       "price": 185,
       "booking": "https://www.booking.com/",
       "airbnb": "https://www.airbnb.com.ar/",
-      "instagram": "https://instagram.com/santafebahiapremium",
-      "facebook": "https://facebook.com/santafebahiapremium",
-      "email": "santafe@bahiapremium.com.ar"
+      "instagram": "https://instagram.com/sfebahiapremium",
+      "facebook": "https://facebook.com/sfebahiapremium",
+      "email": "sfebahiapremium@gmail.com.ar"
     }
   }
 }
