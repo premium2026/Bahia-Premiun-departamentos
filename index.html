@@ -844,28 +844,24 @@ const apartments = {
 
 const imageCache = {}; // `${apt}/${room}` -> [urls...]
 
-async function fetchRoomImages(aptKey, roomKey){
-  const cacheKey = `${aptKey}/${roomKey}`;
-  if(imageCache[cacheKey]) return imageCache[cacheKey];
-  const apt = apartments[aptKey];
-  const room = apt.rooms[roomKey];
-  const path = `${apt.basePath}/${room.folder}`;
-  const apiUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path.split('/').map(encodeURIComponent).join('/')}?ref=${GH_BRANCH}`;
-  try{
-    const res = await fetch(apiUrl);
-    if(!res.ok){ imageCache[cacheKey] = []; return []; }
-    const list = await res.json();
-    if(!Array.isArray(list)){ imageCache[cacheKey] = []; return []; }
-    const images = list
-      .filter(item => item.type === 'file' && IMG_EXT.test(item.name))
-      .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
-      .map(item => item.download_url);
-    imageCache[cacheKey] = images;
-    return images;
-  } catch(err){
-    imageCache[cacheKey] = [];
-    return [];
-  }
+// Trae TODO el árbol de archivos del repo en una sola consulta (en vez de
+// una consulta por carpeta), para no pisar el límite gratuito de la API de GitHub.
+let repoTreePromise = null;
+function getRepoTree(){
+  if(repoTreePromise) return repoTreePromise;
+  repoTreePromise = fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/git/trees/${GH_BRANCH}?recursive=1`)
+    .then(res => res.ok ? res.json() : { tree: [] })
+    .then(data => Array.isArray(data.tree) ? data.tree : [])
+    .catch(() => []);
+  return repoTreePromise;
+}
+
+function imagesForFolder(tree, fullPath){
+  const prefix = fullPath.toLowerCase() + '/';
+  return tree
+    .filter(item => item.type === 'blob' && item.path.toLowerCase().startsWith(prefix) && IMG_EXT.test(item.path))
+    .sort((a, b) => a.path.localeCompare(b.path, undefined, { numeric: true }))
+    .map(item => `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${item.path.split('/').map(encodeURIComponent).join('/')}`);
 }
 
 const galleryState = {}; // { ohiggins: {room:'living', index:0}, santafe: {...} }
@@ -876,7 +872,11 @@ async function initGallery(aptKey){
   const container = document.getElementById(`gal-${aptKey}`);
   if(container) container.innerHTML = `<div class="gallery-empty">Cargando fotos…</div>`;
 
-  await Promise.all(roomKeys.map(rk => fetchRoomImages(aptKey, rk)));
+  const tree = await getRepoTree();
+  roomKeys.forEach(rk => {
+    const fullPath = `${apartments[aptKey].basePath}/${rooms[rk].folder}`;
+    imageCache[`${aptKey}/${rk}`] = imagesForFolder(tree, fullPath);
+  });
 
   const firstWithPhotos = roomKeys.find(rk => imageCache[`${aptKey}/${rk}`].length > 0);
   galleryState[aptKey] = { room: firstWithPhotos || roomKeys[0], index: 0 };
@@ -1046,73 +1046,3 @@ form.addEventListener('submit', (e) => {
   e.preventDefault();
   if(!form.checkValidity()){ form.reportValidity(); return; }
   const text = buildMessage();
-  window.open(`https://wa.me/${window.siteData ? window.siteData.whatsapp : '5492911234567'}?text=${text}`, '_blank');
-});
-document.getElementById('sendEmail').addEventListener('click', () => {
-  if(!form.checkValidity()){ form.reportValidity(); return; }
-  const name = document.getElementById('f_name').value;
-  const email = document.getElementById('f_email').value;
-  const aptKey = document.getElementById('f_apt').value;
-  let targetEmail = 'reservas@bahiapremium.com.ar'; // fallback si no hay data.json cargado
-  if(window.siteData && window.siteData.apartments){
-    const chosen = window.siteData.apartments[aptKey];
-    if(chosen && chosen.email){
-      targetEmail = chosen.email;
-    } else {
-      // "Aún no lo decidí" u otro valor: usamos el primer depto disponible como destino
-      const first = Object.values(window.siteData.apartments)[0];
-      if(first && first.email) targetEmail = first.email;
-    }
-  }
-  const subject = encodeURIComponent('Consulta de disponibilidad — Bahía Premium');
-  const body = buildMessage().replace(/%0A/g, '\n');
-  const plainMessage = `Para: ${targetEmail}\nDe: ${name} <${email}>\n\n${decodeURIComponent(body)}`;
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(plainMessage).catch(() => {});
-  }
-  window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${encodeURIComponent(`De: ${name} <${email}>\n\n`)}${encodeURIComponent(decodeURIComponent(body))}`;
-});
-
-// -------- load editable content from data.json (managed via admin.html) --------
-window.siteData = null;
-fetch('data.json?_=' + Date.now())
-  .then(r => r.json())
-  .then(data => {
-    window.siteData = data;
-
-    // WhatsApp: rebuild every wa.me link using the real number + its own message
-    document.querySelectorAll('[data-wa-msg]').forEach(el => {
-      el.href = `https://wa.me/${data.whatsapp}?text=${el.getAttribute('data-wa-msg')}`;
-    });
-    const socialWa = document.getElementById('social-whatsapp');
-    if(socialWa) socialWa.href = `https://wa.me/${data.whatsapp}`;
-    const contactWa = document.getElementById('contact-wa-display');
-    if(contactWa) contactWa.textContent = '+' + data.whatsapp.replace(/(\d{2})(\d)(\d{3})(\d{3})(\d{4})/, '$1 $2 $3-$4$5');
-
-    // Social links (only WhatsApp is shared; Instagram/Facebook/Email are per apartment now)
-
-    // Per-apartment: price, Booking, Airbnb, Instagram, Facebook, Email
-    Object.keys(data.apartments).forEach(key => {
-      const apt = data.apartments[key];
-      const priceEl = document.getElementById(`price-${key}`);
-      if(priceEl) priceEl.textContent = `USD ${apt.price}`;
-      const bookingEl = document.getElementById(`booking-${key}`);
-      if(bookingEl) bookingEl.href = apt.booking;
-      const airbnbEl = document.getElementById(`airbnb-${key}`);
-      if(airbnbEl) airbnbEl.href = apt.airbnb;
-      const igEl = document.getElementById(`instagram-${key}`);
-      if(igEl && apt.instagram) igEl.href = apt.instagram;
-      const fbEl = document.getElementById(`facebook-${key}`);
-      if(fbEl && apt.facebook) fbEl.href = apt.facebook;
-      const emailEl = document.getElementById(`email-${key}`);
-      const emailTextEl = document.getElementById(`email-${key}-text`);
-      if(emailEl && apt.email){
-        emailEl.href = `mailto:${apt.email}`;
-        if(emailTextEl) emailTextEl.textContent = apt.email;
-      }
-    });
-  })
-  .catch(err => console.log('No se pudo cargar data.json, se usan los valores por defecto del código.', err));
-</script>
-</body>
-</html>
