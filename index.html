@@ -270,9 +270,11 @@
   }
   .apt-social a:hover{color:var(--brass);}
   .apt-social svg{width:17px; height:17px; stroke:currentColor; flex-shrink:0;}
-  .btn-book{background:var(--ink); color:var(--text-light);}
-  .btn-book:hover{background:var(--ink-soft);}
+  .btn-book{background:#003580; color:#fff;}
+  .btn-book:hover{background:#002a66;}
   .btn-air{background:#FF5A5F; color:#fff;}
+  .btn-dark{background:var(--ink); color:var(--text-light);}
+  .btn-dark:hover{background:var(--ink-soft);}
   .btn-air:hover{filter:brightness(1.08);}
   .btn-wa{background:var(--wa); color:#fff;}
   .btn-wa:hover{filter:brightness(1.06);}
@@ -702,7 +704,7 @@
         </div>
         <div class="form-actions">
           <button type="submit" class="btn btn-wa"><span data-i18n="f_send_wa">Enviar por WhatsApp</span></button>
-          <button type="button" id="sendEmail" class="btn btn-book"><span data-i18n="f_send_mail">Enviar por email</span></button>
+          <button type="button" id="sendEmail" class="btn btn-dark"><span data-i18n="f_send_mail">Enviar por email</span></button>
         </div>
         <p class="form-note" data-i18n="f_note">Al enviar por email se abrirá tu programa de correo (Gmail, Outlook, etc.); si tu compu te pregunta con qué programa abrirlo y no estás seguro, elegí Gmail o cancelá y escribinos directo por WhatsApp — igual copiamos tu consulta al portapapeles por las dudas. No almacenamos tu información en este sitio.</p>
       </form>
