@@ -704,7 +704,7 @@
           <button type="submit" class="btn btn-wa"><span data-i18n="f_send_wa">Enviar por WhatsApp</span></button>
           <button type="button" id="sendEmail" class="btn btn-dark"><span data-i18n="f_send_mail">Enviar por email</span></button>
         </div>
-        <p class="form-note" data-i18n="f_note">Al enviar por email se abrirá tu programa de correo (Gmail, Outlook, etc.); si tu compu te pregunta con qué programa abrirlo y no estás seguro, elegí Gmail o cancelá y escribinos directo por WhatsApp — igual copiamos tu consulta al portapapeles por las dudas. No almacenamos tu información en este sitio.</p>
+        <p class="form-note" data-i18n="f_note">Al enviar por email se abre un borrador de Gmail con todo completado (necesitás estar logueado en Gmail en el navegador); si usás otro correo, copiamos el mensaje al portapapeles para que lo pegues ahí. También podés escribirnos directo por WhatsApp. No almacenamos tu información en este sitio.</p>
       </form>
     </div>
   </div>
@@ -799,7 +799,7 @@ const translations = {
   f_guests:{en:"Guests"}, f_apt:{en:"Apartment of interest"}, f_apt_1:{en:"Apt. O'Higgins 530"}, f_apt_2:{en:"Apt. Santa Fe 56"},
   f_apt_3:{en:"Not sure yet"}, f_email:{en:"Email"}, f_msg:{en:"Message"},
   f_send_wa:{en:"Send via WhatsApp"}, f_send_mail:{en:"Send via email"},
-  f_note:{en:"Sending by email opens your mail app (Gmail, Outlook, etc.); if your computer asks which app to use and you're not sure, choose Gmail or cancel and message us on WhatsApp instead — we also copy your message to your clipboard just in case. Nothing is stored on this site."},
+  f_note:{en:"Sending by email opens a pre-filled Gmail draft (you need to be signed into Gmail in your browser); if you use another provider, we copy the message to your clipboard so you can paste it there. You can also message us directly on WhatsApp. Nothing is stored on this site."},
   foot_desc:{en:"Premium short-term rentals in Bahía Blanca - Buenos Aires - Argentina. Two addresses, one same standard of hospitality."},
   foot_nav:{en:"Navigation"}, foot_follow:{en:"Follow us"}, foot_rights:{en:"All rights reserved."},
   foot_note:{en:"Demo site — replace addresses, prices, photos and links with real data."}
@@ -1095,13 +1095,26 @@ document.getElementById('sendEmail').addEventListener('click', () => {
       if(first && first.email) targetEmail = first.email;
     }
   }
-  const subject = encodeURIComponent('Consulta de disponibilidad — Bahía Premium');
+  const subject = 'Consulta de disponibilidad — Bahía Premium';
   const body = buildMessage().replace(/%0A/g, '\n');
-  const plainMessage = `Para: ${targetEmail}\nDe: ${name} <${email}>\n\n${decodeURIComponent(body)}`;
+  const plainBody = decodeURIComponent(body);
+  const fullPlainMessage = `De: ${name} <${email}>\n\n${plainBody}`;
+
+  // Copiamos el mensaje al portapapeles por si el usuario prefiere pegarlo en otro correo
   if(navigator.clipboard){
-    navigator.clipboard.writeText(plainMessage).catch(() => {});
+    navigator.clipboard.writeText(`Para: ${targetEmail}\n${fullPlainMessage}`).catch(() => {});
   }
-  window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${encodeURIComponent(`De: ${name} <${email}>\n\n`)}${encodeURIComponent(decodeURIComponent(body))}`;
+
+  // Abrimos directo un borrador de Gmail (más confiable que "mailto:", que falla
+  // si la compu no tiene un programa de correo configurado por defecto).
+  const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(targetEmail)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(fullPlainMessage)}`;
+  const gmailWindow = window.open(gmailUrl, '_blank');
+
+  // Si el navegador bloqueó la ventana o no hay sesión de Gmail disponible,
+  // como respaldo abrimos el mailto: tradicional (por si sí tienen un programa configurado).
+  if(!gmailWindow){
+    window.location.href = `mailto:${targetEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(fullPlainMessage)}`;
+  }
 });
 
 // -------- load editable content from data.json (managed via admin.html) --------
